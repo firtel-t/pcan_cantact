@@ -1,5 +1,9 @@
 #pragma once
+#if defined(STM32G431xx)
+#include <stm32g4xx_hal.h>
+#else
 #include <stm32f0xx_hal.h>
+#endif
 
 #define GPIO_NOAF (0u)
 #define _PIN_INIT( _PORT, _PIN, _MODE, _PULL, _SPEED, _AF )\

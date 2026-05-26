@@ -1,5 +1,9 @@
 #include <assert.h>
+#if defined(STM32G431xx)
+#include "stm32g4xx_hal.h"
+#else
 #include "stm32f0xx_hal.h"
+#endif
 #include "pcan_timestamp.h"
 #include "pcan_led.h"
 #include "pcan_varian.h"

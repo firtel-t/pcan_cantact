@@ -54,6 +54,31 @@ if( PIN_STAT( VS_5V ) == 0 ){ PIN_HI( LED_5V); PIN_HI( OUTPUT_EN_5V ); }\
 if( PIN_STAT( VS_3V3 ) == 0 ){ PIN_HI( LED_3V3); PIN_HI( OUTPUT_EN_3V3 ); }\
 if( PIN_STAT( VS_1V8 ) == 0 ){ PIN_HI( LED_1V8); PIN_HI( OUTPUT_EN_1V8 ); }\
 }while(0)
+#elif (defined G431_BOARD)
+/*
+ * MKS CANable V2.0 board variant (STM32G431C8)
+ *
+ * Pin assignment:
+ *   FDCAN1_RX  = PB8  (AF9)
+ *   FDCAN1_TX  = PB9  (AF9)
+ *   USB D-     = PA11 (AF10)
+ *   USB D+     = PA12 (AF10)
+ *   LED D2 (blue/stat)  = PA15 (active low)
+ *   LED D3 (green/work) = PA0  (active low)
+ *
+ * Clock: HSI 16MHz (no external crystal)
+ */
+#define IOPIN_TX    A, 15, MODE_OUTPUT_PP, NOPULL, SPEED_FREQ_MEDIUM, NOAF
+#define IOPIN_RX    A, 0, MODE_OUTPUT_PP, NOPULL, SPEED_FREQ_MEDIUM, NOAF
+/* Active low: ON = pin LOW, OFF = pin HIGH */
+#define LED_ON      PIN_LOW
+#define LED_OFF     PIN_HI
+
+/* FDCAN1 pins: PB8 = RX (AF9), PB9 = TX (AF9) */
+#define CAN_RX      B, 8, MODE_AF_PP, NOPULL, SPEED_FREQ_HIGH, AF9_FDCAN1
+#define CAN_TX      B, 9, MODE_AF_PP, NOPULL, SPEED_FREQ_HIGH, AF9_FDCAN1
+
+#define pcan_variant_io_init()
 #else
 #error Unknown board variant
 #endif

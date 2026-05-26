@@ -36,6 +36,14 @@ make canable
 make mks_canable2
 ```
 
+## Flash
+
+Simply upload the `.bin` file via WebUSB DFU — no special tools required.
+
+* https://devanlai.github.io/webdfu/dfu-util/
+
+Hold the BOOT button while connecting USB to enter DFU mode.
+
 License
 ----
 

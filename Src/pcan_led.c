@@ -66,6 +66,11 @@ static void pcan_led_update_state( int led, uint8_t state )
       state ? (LED_ON( IOPIN_RX )): (LED_OFF( IOPIN_RX ));
     break;
 #endif
+#ifdef IOPIN_STAT
+    case LED_STAT:
+      state ? (LED_ON( IOPIN_STAT )): (LED_OFF( IOPIN_STAT ));
+    break;
+#endif
     default:
       (void)state;
       return;

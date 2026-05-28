@@ -54,6 +54,32 @@ if( PIN_STAT( VS_5V ) == 0 ){ PIN_HI( LED_5V); PIN_HI( OUTPUT_EN_5V ); }\
 if( PIN_STAT( VS_3V3 ) == 0 ){ PIN_HI( LED_3V3); PIN_HI( OUTPUT_EN_3V3 ); }\
 if( PIN_STAT( VS_1V8 ) == 0 ){ PIN_HI( LED_1V8); PIN_HI( OUTPUT_EN_1V8 ); }\
 }while(0)
+#elif (defined USB2CAN)
+/*
+ * USB2CAN board variant (STM32F042C6T, nWorld mod)
+ *
+ * Pin assignment:
+ *   CAN RX = PB8 (AF4)
+ *   CAN TX = PB9 (AF4)
+ *   LED TX = PB2  (active high)
+ *   LED RX = PB10 (active high)
+ *   LED STAT(LINK) = PB11 (active high)
+ *
+ * Clock: 16MHz external crystal
+ */
+#define IOPIN_TX    B, 2, MODE_OUTPUT_PP, NOPULL, SPEED_FREQ_MEDIUM, NOAF
+#define IOPIN_RX    B, 10, MODE_OUTPUT_PP, NOPULL, SPEED_FREQ_MEDIUM, NOAF
+#define IOPIN_STAT  B, 11, MODE_OUTPUT_PP, NOPULL, SPEED_FREQ_MEDIUM, NOAF
+#define LED_ON      PIN_HI
+#define LED_OFF     PIN_LOW
+
+#define CAN_RX      B, 8, MODE_AF_PP, NOPULL, SPEED_FREQ_HIGH, AF4_CAN
+#define CAN_TX      B, 9, MODE_AF_PP, NOPULL, SPEED_FREQ_HIGH, AF4_CAN
+
+#define pcan_variant_io_init() do{ \
+  PIN_ENABLE_CLOCK( IOPIN_STAT ); \
+  PIN_INIT( IOPIN_STAT ); \
+}while(0)
 #elif (defined G431_BOARD)
 /*
  * MKS CANable V2.0 board variant (STM32G431C8)

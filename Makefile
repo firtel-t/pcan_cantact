@@ -188,6 +188,14 @@ canable:
 ollie:
 	$(MAKE) BOARD=ollie DEBUG=0 OPT=-Os BOARD_FLAGS='-DHSE_VALUE=16000000' elf hex bin
 
+# --- F042 USB2CAN (no crystal mod, internal HSI48, LED on PB2/PB10/PB11) ---
+usb2can:
+	$(MAKE) BOARD=usb2can DEBUG=0 OPT=-Os BOARD_FLAGS='-DHSE_VALUE=0' BOARD_DEFS='-DUSB2CAN' elf hex bin
+
+# --- F042 SH-C30G (DSD TECH, 24MHz crystal, CANtact pinout) ---
+sh_c30g:
+	$(MAKE) BOARD=sh_c30g DEBUG=0 OPT=-Os BOARD_FLAGS='-DHSE_VALUE=24000000' BOARD_DEFS='-DCANTACT_16' elf hex bin
+
 # --- G431 target ---
 mks_canable2:
 	$(MAKE) BOARD=mks_canable2 DEBUG=0 OPT=-Os BOARD_FLAGS='' BOARD_DEFS='' elf hex bin

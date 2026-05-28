@@ -12,6 +12,8 @@
 * [CANable](https://canable.io/) - opensource USB-CAN adapter based on CANtact project `make canable`
 * [Entreé](https://github.com/tuna-f1sh/entree) - opensource USB-C CAN adapter based on CANable project `make entree`
 * [Ollie](https://github.com/slimelec/ollie-hw) - opensource USB-CAN adapter with isolated USB `make ollie`
+* [USB2CAN](https://www.inno-maker.com/product/usb-can/) - InnoMaker USB-CAN analyzer with isolated  `make usb2can`
+* [SH-C30G](https://www.deshide.com/product-details_SH-C30G.html) - DSD TECH isolated USB-CAN adapter with 24MHz crystal `make sh_c30g`
 * Any other STM32F042 based boards with external or internal OSC.
 
 ### STM32G431 (FDCAN, Classic CAN only - CAN FD not supported)
@@ -31,6 +33,12 @@ make
 
 # Build specific F042 target
 make canable
+
+# Build USB2CAN (internal oscillator)
+make usb2can
+
+# Build SH-C30G (24MHz crystal)
+make sh_c30g
 
 # Build G431 target (MKS CANable V2.0)
 make mks_canable2

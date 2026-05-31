@@ -169,8 +169,8 @@ LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BU
 
 .PHONY : all clean
 
-# default action: build all F042 targets
-all: cantact_16 cantact_8 entree canable
+# default action: build all targets
+all: cantact_16 cantact_8 entree canable ollie usb2can sh_c30g mks_canable2
 
 # --- F042 targets ---
 cantact_16:

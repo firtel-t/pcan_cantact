@@ -20,6 +20,7 @@
 
 * [MKS CANable V2.0](https://github.com/makerbase-mks/CANable-MKS) - USB-CAN adapter with STM32G431 `make mks_canable2`
 * Any other STM32G431 based boards with FDCAN + USB.
+* See fork of [pcan_pro_x](https://github.com/firtel-t/pcan_pro_x/tree/add-stm32g431-support) for CAN FD support.
 
 ## Toolchain
 

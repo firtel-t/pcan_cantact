@@ -17,6 +17,7 @@ void HAL_MspInit( void )
   __HAL_RCC_SYSCFG_CLK_ENABLE();
   __HAL_RCC_PWR_CLK_ENABLE();
 
+  __HAL_RCC_GPIOF_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
@@ -24,6 +25,7 @@ void HAL_MspInit( void )
 
 void SystemClock_Config( void )
 {
+#if !defined(WEACT_USB2CANFD2)
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
   RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
@@ -92,6 +94,82 @@ void SystemClock_Config( void )
   {
     while(1);
   }
+#else
+  /* ----------------------------------------------------------------
+   * WeActStudio USB2CANFDV2: 16MHz HSE crystal.
+   * Same divider tree as the HSI config above (VCO 320MHz -> 160MHz
+   * SYSCLK, 80MHz FDCAN) but sourced from the external crystal.
+   * FDCAN kept at 80MHz to match pcan_can.c's hardcoded bit-timing;
+   * see plan notes. USB from HSI48 + CRS.
+   * ---------------------------------------------------------------- */
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+
+  /* Configure the main internal regulator output voltage */
+  HAL_PWREx_ControlVoltageScaling( PWR_REGULATOR_VOLTAGE_SCALE1_BOOST );
+
+  /* Enable HSE crystal and HSI48, configure PLL from HSE */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE | RCC_OSCILLATORTYPE_HSI48;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLM = RCC_PLLM_DIV1;   /* 16MHz / 1 = 16MHz */
+  RCC_OscInitStruct.PLL.PLLN = 20;               /* 16MHz * 20 = 320MHz VCO */
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;   /* 160MHz */
+  RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV4;   /* 320/4 = 80MHz for FDCAN */
+  RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;   /* 320/2 = 160MHz SYSCLK */
+
+  if( HAL_RCC_OscConfig( &RCC_OscInitStruct ) != HAL_OK )
+  {
+    while(1);
+  }
+
+  /* Select PLL as system clock source and configure bus clocks */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
+                              | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+
+  if( HAL_RCC_ClockConfig( &RCC_ClkInitStruct, FLASH_LATENCY_4 ) != HAL_OK )
+  {
+    while(1);
+  }
+
+  /* USB clock from HSI48 */
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB;
+  PeriphClkInit.UsbClockSelection = RCC_USBCLKSOURCE_HSI48;
+
+  if( HAL_RCCEx_PeriphCLKConfig( &PeriphClkInit ) != HAL_OK )
+  {
+    while(1);
+  }
+
+  /* Enable CRS for HSI48 calibration from USB SOF */
+  __HAL_RCC_CRS_CLK_ENABLE();
+
+  RCC_CRSInitTypeDef RCC_CRSInitStruct = {0};
+  RCC_CRSInitStruct.Prescaler = RCC_CRS_SYNC_DIV1;
+  RCC_CRSInitStruct.Source = RCC_CRS_SYNC_SOURCE_USB;
+  RCC_CRSInitStruct.Polarity = RCC_CRS_SYNC_POLARITY_RISING;
+  RCC_CRSInitStruct.ReloadValue = __HAL_RCC_CRS_RELOADVALUE_CALCULATE( 48000000, 1000 );
+  RCC_CRSInitStruct.ErrorLimitValue = 34;
+  RCC_CRSInitStruct.HSI48CalibrationValue = 32;
+
+  HAL_RCCEx_CRSConfig( &RCC_CRSInitStruct );
+
+  /* FDCAN clock from PLLQ (80MHz) */
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_FDCAN;
+  PeriphClkInit.FdcanClockSelection = RCC_FDCANCLKSOURCE_PLL;
+
+  if( HAL_RCCEx_PeriphCLKConfig( &PeriphClkInit ) != HAL_OK )
+  {
+    while(1);
+  }
+#endif /* WEACT_USB2CANFD2 */
 }
 
 #else

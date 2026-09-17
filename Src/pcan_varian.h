@@ -80,6 +80,41 @@ if( PIN_STAT( VS_1V8 ) == 0 ){ PIN_HI( LED_1V8); PIN_HI( OUTPUT_EN_1V8 ); }\
   PIN_ENABLE_CLOCK( IOPIN_STAT ); \
   PIN_INIT( IOPIN_STAT ); \
 }while(0)
+#elif (defined WEACT_USB2CANFD2)
+/*
+ * WeActStudio USB2CANFDV2 board variant (STM32G431CBT6)
+ *
+ * Pin assignment:
+ *   FDCAN1_RX = PB8 (AF9)
+ *   FDCAN1_TX = PB9 (AF9)          [Classic CAN only]
+ *   LED RX    = PA0 (active low)
+ *   LED TX    = PA1 (active low)
+ *   LED READY/STAT = PA2 (active low)
+ *   Transceiver enable (CA-IS2062A) = PB7, active low -> drive LOW to enable
+ *
+ * Clock: 16MHz external crystal (HSE) on PF0/PF1
+ */
+#define IOPIN_TX    A, 1, MODE_OUTPUT_PP, NOPULL, SPEED_FREQ_MEDIUM, NOAF
+#define IOPIN_RX    A, 0, MODE_OUTPUT_PP, NOPULL, SPEED_FREQ_MEDIUM, NOAF
+#define IOPIN_STAT  A, 2, MODE_OUTPUT_PP, NOPULL, SPEED_FREQ_MEDIUM, NOAF
+/* Active low: ON = pin LOW, OFF = pin HIGH */
+#define LED_ON      PIN_LOW
+#define LED_OFF     PIN_HI
+
+/* FDCAN1 pins: PB8 = RX (AF9), PB9 = TX (AF9) */
+#define CAN_RX      B, 8, MODE_AF_PP, NOPULL, SPEED_FREQ_HIGH, AF9_FDCAN1
+#define CAN_TX      B, 9, MODE_AF_PP, NOPULL, SPEED_FREQ_HIGH, AF9_FDCAN1
+
+/* Transceiver RXD enable on PB7, active low: init as output, drive LOW to enable */
+#define CAN_RXD_EN  B, 7, MODE_OUTPUT_PP, NOPULL, SPEED_FREQ_MEDIUM, NOAF
+
+#define pcan_variant_io_init() do{ \
+  PIN_ENABLE_CLOCK( IOPIN_STAT ); \
+  PIN_INIT( IOPIN_STAT ); \
+  PIN_ENABLE_CLOCK( CAN_RXD_EN ); \
+  PIN_INIT( CAN_RXD_EN ); \
+  PIN_LOW( CAN_RXD_EN ); \
+}while(0)
 #elif (defined G431_BOARD)
 /*
  * MKS CANable V2.0 board variant (STM32G431C8)

@@ -36,7 +36,7 @@ Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c \
 Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c
 
 # --- STM32G431 specific ---
-ifeq ($(BOARD),mks_canable2)
+ifneq (,$(filter $(BOARD),mks_canable2 weact_usb2canfd2))
 
 C_SOURCES = $(APP_SOURCES) \
 Src/system_stm32g4xx.c \
@@ -169,8 +169,8 @@ LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BU
 
 .PHONY : all clean
 
-# default action: build all F042 targets
-all: cantact_16 cantact_8 entree canable
+# default action: build all targets
+all: cantact_16 cantact_8 entree canable ollie usb2can sh_c30g mks_canable2 weact_usb2canfd2
 
 # --- F042 targets ---
 cantact_16:
@@ -199,6 +199,10 @@ sh_c30g:
 # --- G431 target ---
 mks_canable2:
 	$(MAKE) BOARD=mks_canable2 DEBUG=0 OPT=-Os BOARD_FLAGS='' BOARD_DEFS='' elf hex bin
+
+# --- G431 WeAct USB2CANFDV2 (16MHz HSE crystal, FDCAN, active-low LEDs) ---
+weact_usb2canfd2:
+	$(MAKE) BOARD=weact_usb2canfd2 DEBUG=0 OPT=-Os BOARD_FLAGS='-DHSE_VALUE=16000000' BOARD_DEFS='' elf hex bin
 
 #######################################
 # build the application

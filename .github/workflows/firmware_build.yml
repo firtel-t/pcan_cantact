@@ -9,16 +9,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write   # required to publish the rolling release
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
 
-      #- name: arm-none-eabi-gcc
-      #  uses: fiam/arm-none-eabi-gcc@v1
-      #  with:
-      #    release: '10-2020-q4'
       - name: install toolchain...
         run: sudo apt install -y gcc-arm-none-eabi
 
       - name: build firmware...
         run: make
+
+      - name: upload artifacts...
+        uses: actions/upload-artifact@v7
+        with:
+          name: pcan-firmware-${{ github.sha }}
+          path: |
+            build-*/pcan_*_hw.hex
+            build-*/pcan_*_hw.bin

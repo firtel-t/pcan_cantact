@@ -19,6 +19,7 @@
 ### STM32G431 (FDCAN, Classic CAN only - CAN FD not supported)
 
 * [MKS CANable V2.0](https://github.com/makerbase-mks/CANable-MKS) - USB-CAN adapter with STM32G431 `make mks_canable2`
+* [WeActStudio USB2CANFDV2](https://github.com/WeActStudio/WeActStudio.USB2CANFDV2) - Isolated USB-CAN(FD) adapter with 16MHz crystal `make weact_usb2canfd2`
 * Any other STM32G431 based boards with FDCAN + USB.
 * See fork of [pcan_pro_x](https://github.com/firtel-t/pcan_pro_x/tree/add-stm32g431-support) for CAN FD support.
 
@@ -43,6 +44,9 @@ make sh_c30g
 
 # Build G431 target (MKS CANable V2.0)
 make mks_canable2
+
+# Build G431 target (WeActStudio USB2CANFDV2)
+make weact_usb2canfd2
 ```
 
 ## Flash
